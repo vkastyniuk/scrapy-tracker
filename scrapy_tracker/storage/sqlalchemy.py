@@ -44,9 +44,6 @@ class SqlAlchemyStorage(Storage):
             self.session.execute(KeyChecksumModel.__table__.delete())
             self.session.commit()
 
-        if drop_all_keys:
-            self._redis.flushdb()
-
     def getset(self, key, checksum):
         model = KeyChecksumModel.query(self.session).get(key)
         if model:
