@@ -1,0 +1,4 @@
+scrapy
+SQLAlchemy
+redis
+six
