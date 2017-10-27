@@ -8,8 +8,8 @@ from scrapy_tracker.items import UpdateStrategy, TrackableItem
 logger = logging.getLogger(__name__)
 
 
-def simple_key_builder(item, spider):
-    return '%s_%s' % (spider.name, item.key)
+def simple_key_builder(item, _):
+    return item.key
 
 
 def spider_aware_key_builder(item, spider):

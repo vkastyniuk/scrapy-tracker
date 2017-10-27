@@ -10,6 +10,7 @@ DeclarativeBase = declarative_base()
 
 
 class KeyChecksumModel(DeclarativeBase):
+
     __tablename__ = 'key_checksum'
     __table_args__ = (
         {
@@ -31,29 +32,28 @@ class KeyChecksumModel(DeclarativeBase):
 
 
 class SqlAlchemyStorage(Storage):
+
     def __init__(self, settings):
         engine = settings.get('TRACKER_SQLALCHEMY_ENGINE', 'sqlite:///:memory:')
-        self.engine = create_engine(engine)
-
         session_cls = sessionmaker()
-        session_cls.configure(bind=self.engine)
-        self.session = session_cls(expire_on_commit=False)
+        session_cls.configure(bind=create_engine(engine))
+        self._session = session_cls(expire_on_commit=False)
 
         drop_all_keys = settings.getbool('TRACKER_SQLALCHEMY_FLUSH_DB', False)
         if drop_all_keys:
-            self.session.execute(KeyChecksumModel.__table__.delete())
-            self.session.commit()
+            self._session.execute(KeyChecksumModel.__table__.delete())
+            self._session.commit()
 
     def getset(self, key, checksum):
-        model = KeyChecksumModel.query(self.session).get(key)
+        model = KeyChecksumModel.query(self._session).get(key)
         if model:
             old_checksum = model.checksum
             model.checksum = checksum
-            self.session.commit()
+            self._session.commit()
 
             return old_checksum
 
-        self.session.add(KeyChecksumModel(key=key, checksum=checksum))
-        self.session.commit()
+        self._session.add(KeyChecksumModel(key=key, checksum=checksum))
+        self._session.commit()
 
         return None
