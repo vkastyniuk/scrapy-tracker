@@ -5,7 +5,7 @@ from unittest import TestCase
 from scrapy import Field
 
 from scrapy_tracker.items import TrackableItem
-from test import TestItem, TEST_CHECKSUM, TEST_KEY, TEST_ITEM
+from tests import TestItem, TEST_CHECKSUM, TEST_KEY, TEST_ITEM
 
 
 class TestTrackableItem(TestCase):

@@ -8,7 +8,7 @@ from scrapy.exceptions import DropItem
 
 from scrapy_tracker.items import UpdateStrategy
 from scrapy_tracker.pipelines import ItemTrackerPipeline
-from test import TestItem, TestSpider, TEST_ITEM
+from tests import TestItem, TestSpider, TEST_ITEM
 
 
 class SkipUpdatesItem(TestItem):

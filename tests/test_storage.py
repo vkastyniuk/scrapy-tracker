@@ -6,7 +6,7 @@ from scrapy.settings import Settings
 from scrapy_tracker.storage.memory import MemoryStorage
 from scrapy_tracker.storage.redis import RedisStorage
 from scrapy_tracker.storage.sqlalchemy import SqlAlchemyStorage
-from test import TEST_KEY, TEST_CHECKSUM
+from tests import TEST_KEY, TEST_CHECKSUM
 
 
 class TestMemoryStorage(TestCase):

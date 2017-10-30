@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import hashlib
-import json
-from datetime import datetime, date
 from enum import Enum
 
 import scrapy
+
+from scrapy_tracker import utils
 
 
 class cached_property(object):
@@ -37,6 +36,7 @@ class UpdateStrategy(Enum):
 
 class TrackableItem(scrapy.Item):
     update_strategy = UpdateStrategy.APPEND_UPDATES
+    md5 = utils.dict_md5
 
     @classmethod
     def get_key_fields(cls):
@@ -57,22 +57,11 @@ class TrackableItem(scrapy.Item):
         values = {k: v for k, v in self._values.items() if k in key_fields}
         values['item_type'] = type(self).__name__
 
-        return self._md5(values)
+        return TrackableItem.md5(values)
 
     @cached_property
     def checksum(self):
         tracked_fields = self.get_tracked_fields()
         values = {k: v for k, v in self._values.items() if k in tracked_fields}
 
-        return self._md5(values)
-
-    @staticmethod
-    def _md5(values):
-        def _default(obj):
-            if isinstance(obj, date):
-                epoch = datetime.utcfromtimestamp(0).date()
-                return (obj - epoch).days
-            raise TypeError('Can\'t serialize %s' % obj)
-
-        data = json.dumps(values, sort_keys=True, ensure_ascii=False, default=_default).encode('utf-8')
-        return hashlib.md5(data).hexdigest()
+        return TrackableItem.md5(values)

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import logging
 
 from scrapy.exceptions import DropItem
@@ -32,26 +34,27 @@ class ItemTrackerPipeline(object):
         return cls(crawler)
 
     def process_item(self, item, spider):
-        if isinstance(item, TrackableItem):
-            item_type = type(item).__name__.lower()
+        if not isinstance(item, TrackableItem):
+            return item
 
-            self.crawler.stats.inc_value('tracker/%s/total_items_count' % item_type)
-            item_key = self.key_builder(spider, item)
+        item_type = type(item).__name__.lower()
+        self.crawler.stats.inc_value('tracker/%s/total_items_count' % item_type)
 
-            old_checksum = self.storage.getset(item_key, item.checksum)
-            if old_checksum:
-                if old_checksum.decode('utf-8') == item.checksum:
-                    # skip item duplicate
-                    return DropItem('Skip item duplicate: %s' % item)
+        item_key = self.key_builder(item, spider)
+        old_checksum = self.storage.getset(item_key, item.checksum)
+        if old_checksum:
+            if old_checksum == item.checksum:
+                # skip item duplicate
+                return DropItem('Skip item duplicate: %s' % item)
 
-                self.crawler.stats.inc_value('tracker/%s/item_updates_count' % item_type)
-                if item.update_strategy is UpdateStrategy.SKIP_UPDATES:
-                    # skip item update
-                    return DropItem('Skip item update: %s' % item)
+            self.crawler.stats.inc_value('tracker/%s/item_updates_count' % item_type)
+            if item.update_strategy is UpdateStrategy.SKIP_UPDATES:
+                # skip item update
+                return DropItem('Skip item update: %s' % item)
 
-                # process item update
-                return item
-            else:
-                # process new item
-                self.crawler.stats.inc_value('tracker/%s/new_items_count' % item_type)
-                return item
+            # process item update
+            return item
+
+        # process new item
+        self.crawler.stats.inc_value('tracker/%s/new_items_count' % item_type)
+        return item

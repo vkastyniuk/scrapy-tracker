@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from scrapy_tracker.storage import Storage
 
 

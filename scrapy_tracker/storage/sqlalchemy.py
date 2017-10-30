@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from sqlalchemy import Column
 from sqlalchemy import String
 from sqlalchemy.ext.declarative import declarative_base
@@ -27,9 +29,6 @@ class KeyChecksumModel(DeclarativeBase):
     def query(cls, session):
         return session.query(cls)
 
-    def __repr__(self):
-        return '<KeyChecksum:%s %s>' % (self.key, self.checksum)
-
 
 class SqlAlchemyStorage(Storage):
 
@@ -38,6 +37,9 @@ class SqlAlchemyStorage(Storage):
         session_cls = sessionmaker()
         session_cls.configure(bind=create_engine(engine))
         self._session = session_cls(expire_on_commit=False)
+
+        if not KeyChecksumModel.__table__.exists(self._session.bind):
+            KeyChecksumModel.__table__.create(self._session.bind)
 
         drop_all_keys = settings.getbool('TRACKER_SQLALCHEMY_FLUSH_DB', False)
         if drop_all_keys:
