@@ -2,6 +2,7 @@
 
 from unittest import TestCase
 
+from datetime import date
 from scrapy import Field
 
 from scrapy_tracker.items import TrackableItem
@@ -37,3 +38,29 @@ class TestTrackableItem(TestCase):
         item = TestItem(TEST_ITEM)
         item['phone'] = 'Updated'
         self.assertEqual(TEST_CHECKSUM, TEST_ITEM.checksum)
+
+    def test_md5(self):
+        md5 = TrackableItem.md5({
+            'string': 'str',
+            'none': None,
+            'unicode': u'абв',
+            'date': date.today(),
+            'dict': {
+                'key': 'value'
+            }
+        })
+        self.assertIsNotNone(md5)
+
+        self.assertEqual(md5, TrackableItem.md5({
+            'date': date.today(),
+            'unicode': u'абв',
+            'none': None,
+            'dict': {
+                'key': 'value'
+            },
+            'string': 'str',
+        }))
+
+    def test_md5_error(self):
+        with self.assertRaises(TypeError):
+            TrackableItem.md5({'unknown': TestCase})

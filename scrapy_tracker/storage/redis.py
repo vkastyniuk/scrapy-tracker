@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import absolute_import
+
 from redis import StrictRedis
 
 from scrapy_tracker.storage import Storage

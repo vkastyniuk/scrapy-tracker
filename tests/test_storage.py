@@ -1,12 +1,12 @@
-from unittest import TestCase
-from unittest.mock import patch, MagicMock
+# -*- coding: utf-8 -*-
 
+from unittest import TestCase
 from scrapy.settings import Settings
 
 from scrapy_tracker.storage.memory import MemoryStorage
 from scrapy_tracker.storage.redis import RedisStorage
 from scrapy_tracker.storage.sqlalchemy import SqlAlchemyStorage
-from tests import TEST_KEY, TEST_CHECKSUM
+from tests import TEST_KEY, TEST_CHECKSUM, mock
 
 
 class TestMemoryStorage(TestCase):
@@ -50,7 +50,7 @@ class TestSqlAlchemyStorage(TestCase):
 
 class TestRedisStorage(TestCase):
     def setUp(self):
-        with patch("scrapy_tracker.storage.redis.StrictRedis") as mock_redis:
+        with mock.patch("scrapy_tracker.storage.redis.StrictRedis") as mock_redis:
             data = {}
 
             def getset(key, val):
@@ -59,9 +59,9 @@ class TestRedisStorage(TestCase):
 
                 return old_val
 
-            mock = MagicMock()
-            mock.getset.side_effect = getset
-            mock_redis.return_value = mock
+            mock_getset = mock.MagicMock()
+            mock_getset.getset.side_effect = getset
+            mock_redis.return_value = mock_getset
 
             self.storage = RedisStorage(Settings({
                 'TRACKER_RADIS_FLUSH_DB': True

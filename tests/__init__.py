@@ -1,6 +1,13 @@
+# -*- coding: utf-8 -*-
+
 from scrapy import Field, Spider
 
 from scrapy_tracker.items import TrackableItem
+
+try:
+    import unittest.mock as mock
+except ImportError:
+    import mock
 
 
 class TestSpider(Spider):

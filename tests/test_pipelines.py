@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from unittest import TestCase, mock
+from unittest import TestCase
 
 from scrapy import Item
 from scrapy.crawler import Crawler
@@ -8,7 +8,7 @@ from scrapy.exceptions import DropItem
 
 from scrapy_tracker.items import UpdateStrategy
 from scrapy_tracker.pipelines import ItemTrackerPipeline
-from tests import TestItem, TestSpider, TEST_ITEM
+from tests import TestItem, TestSpider, TEST_ITEM, mock
 
 
 class SkipUpdatesItem(TestItem):
